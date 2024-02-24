@@ -413,9 +413,8 @@ img {
   transition: filter 0.4s;
 }
 
-.card-img:hover {
-  filter: grayscale(1);
-}
+
+
 
 .right {
   display: flex;
