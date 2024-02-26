@@ -56,34 +56,46 @@ const scrollActive = () =>{
 }
 window.addEventListener('scroll', scrollActive)
 
+// CART ICON code here /////////////////////////////////////////////////////////////
 
 document.addEventListener("DOMContentLoaded", function() {
     const categoryCards = document.querySelectorAll(".card");
     const productsContainer = document.getElementById("products");
-  
+
     categoryCards.forEach(card => {
       card.addEventListener("click", function() {
         const selectedCategory = card.getAttribute("data-category");
         displayProducts(selectedCategory);
       });
     });
-  
+
     function displayProducts(category) {
-     
       const products = getProductsByCategory(category);
-      
-      // Clear previous products
-      productsContainer.innerHTML = "";
-  
-      // Display products for the selected category
+
+      // Clear products container before displaying new products
+      productsContainer.innerHTML = '';
+
+      // Display each product
       products.forEach(product => {
-        const productElement = document.createElement("div");
-        productElement.classList.add("product");
+        const productElement = document.createElement('div');
+        productElement.classList.add('product');
         productElement.innerHTML = `
-          <img src="${product.image}" alt="${product.name}">
+          
+          <img src="${product.image}" alt="${product.name}"> <!-- Include product image -->
           <h3>${product.name}</h3>
-          <p>${product.price}</p>
+          <p>${product.price}</p> <!-- Include product price -->
+          <button>Add to Cart</button>
+          <button class="add-to-favorites">Add to Favorites</button>
         `;
+
+        // Create cart icon element
+        const cartIcon = document.createElement('i');
+        cartIcon.className = 'fas fa-shopping-cart'; // Assuming you're using Font Awesome for cart icon
+
+        // Append cart icon to the product element
+        productElement.appendChild(cartIcon);
+
+        // Append the product to the products container
         productsContainer.appendChild(productElement);
       });
     }
