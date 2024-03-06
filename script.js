@@ -47,62 +47,99 @@ const scrollActive = () =>{
 			  sectionId = current.getAttribute('id'),
 			  sectionsClass = document.querySelector('.nav-menu a[href*=' + sectionId + ']')
 
-		if(scrollDown > sectionTop && scrollDown <= sectionTop + sectionHeight){
-			sectionsClass.classList.add('active-link')
-		}else{
-			sectionsClass.classList.remove('active-link')
-		}                                                    
+	// quick fix to avoid non-existing elements //// modified  /////////////////////////////////
+if(sectionsClass){
+  if(scrollDown > sectionTop && scrollDown <= sectionTop + sectionHeight){
+  sectionClass.classList.add('active-link')
+  }else{
+  sectionsClass.classList.remove('active-link')
+  } 
+}                        
 	})
 }
 window.addEventListener('scroll', scrollActive)
 
-// CART ICON code here /////////////////////////////////////////////////////////////
+// add to cart and add to favorites buttons /////////////////////////////////////////////////////////////
+
+let selectedProduct = null;
 
 document.addEventListener("DOMContentLoaded", function() {
-    const categoryCards = document.querySelectorAll(".card");
-    const productsContainer = document.getElementById("products");
+  const categoryCards = document.querySelectorAll(".card");
+  const productsContainer = document.getElementById("products");
+  const addToCartButtonHeader = document.getElementById("add-to-cart-header");
+  const addToFavoritesButtonHeader = document.getElementById("add-to-favorites-header");
 
-    categoryCards.forEach(card => {
-      card.addEventListener("click", function() {
-        const selectedCategory = card.getAttribute("data-category");
-        displayProducts(selectedCategory);
-      });
+  categoryCards.forEach(card => {
+    card.addEventListener("click", function() {
+      const selectedCategory = card.getAttribute("data-category");
+      displayProducts(selectedCategory);
     });
+  });
 
-    function displayProducts(category) {
-      const products = getProductsByCategory(category);
-
-      // Clear products container before displaying new products
-      productsContainer.innerHTML = '';
-
-      // Display each product
-      products.forEach(product => {
-        const productElement = document.createElement('div');
-        productElement.classList.add('product');
-        productElement.innerHTML = `
-          
-          <img src="${product.image}" alt="${product.name}"> <!-- Include product image -->
-          <h3>${product.name}</h3>
-          <p>${product.price}</p> <!-- Include product price -->
-          <button>Add to Cart</button>
-          <button class="add-to-favorites">Add to Favorites</button>
-        `;
-
-        // Create cart icon element
-        const cartIcon = document.createElement('i');
-        cartIcon.className = 'fas fa-shopping-cart'; // Assuming you're using Font Awesome for cart icon
-
-        // Append cart icon to the product element
-        productElement.appendChild(cartIcon);
-
-        // Append the product to the products container
-        productsContainer.appendChild(productElement);
-      });
+  // Event listener for "Add to Cart" button in header
+  addToCartButtonHeader.addEventListener('click', function() {
+    if (selectedProduct) {
+      addToCart(selectedProduct);
+    } else {
+      console.log("No product selected.");
     }
+  });
+
+  // Event listener for "Add to Favorites" button in header
+  addToFavoritesButtonHeader.addEventListener('click', function() {
+    if (selectedProduct) {
+      addToFavorites(selectedProduct);
+    } else {
+      console.log("No product selected.");
+    }
+  });
+
+  function displayProducts(category) {
+
+    selectedProduct = getProductsByCategory(category)[0];
+    renderProducts(getProductsByCategory(category));
+  }
+
+  function renderProducts(products) {
+    productsContainer.innerHTML = ''; 
+
+    // Display each product
+    products.forEach(product => {
+      const productElement = document.createElement('div');
+      productElement.classList.add('product');
+      productElement.innerHTML = `
+        <img src="${product.image}" alt="${product.name}"> <!-- Include product image -->
+        <h3>${product.name}</h3>
+        <p>${product.price}</p> <!-- Include product price -->
+        <div style="display: flex; gap:2px;">
+        <button class="add-to-cart-btn">Add to Cart</button>
+        <button class="add-to-favorites-btn">Add to Favorites</button>
+      `;
+
+      // Attach event listener to product card
+      productElement.addEventListener('click', function() {
+        selectedProduct = product; // Update selected product when product card is clicked
+        console.log(`Selected product: ${selectedProduct.name}`);
+      });
+
+      // Append the product to the products container
+      productsContainer.appendChild(productElement);
+    });
+  }
+
+  function addToCart(product) {
+    console.log(`Added ${product.name} to cart for ${product.price}`);
+  }
+
+  function addToFavorites(product) {
+    console.log(`Added ${product.name} to favorites`);
+  }
+});
   
-    // Sample function to get products by category (replace with your own data fetching mechanism)
+  
+
     function getProductsByCategory(category) {
-      // This is just a sample data structure. You would likely fetch this from a server/database
+      
       const products = {
         desks: [
             { name: "Modern Desk", image: "pic/modern-desk.jpg", price: "$299" },
@@ -161,5 +198,18 @@ document.addEventListener("DOMContentLoaded", function() {
   
       return products[category] || [];
     }
-  });
+
+    function toggleContent() {
+      var additionalContent = document.getElementById("additional-content");
+      var buttonText = document.querySelector(".about-btn");
+    
+      if (additionalContent.style.display === "none") {
+        additionalContent.style.display = "block";
+        buttonText.textContent = "Read Less";
+      } else {
+        additionalContent.style.display = "none";
+        buttonText.textContent = "Read More";
+      }
+    }
+  ;
   
